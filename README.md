@@ -28,7 +28,7 @@ cd secure-storage
 ```
 ### Generate package
 ```Sh
-   wasm-pack build --target web 
+wasm-pack build --target web 
 ```
 
 ## Usage
@@ -49,16 +49,16 @@ run();
 ```
 
 ## API
-### `set_item(key: string, data: string) => void`
+#### `set_item(key: string, data: string) => void`
 Generates and sets the encrypted data in the localstorage
 
-### `get_item(key: string) => string`
+#### `get_item(key: string) => string`
 Gets the decrypted data in the localstorage
 
-### `remove(key: string) => void`
+#### `remove(key: string) => void`
 Removes the key from localstorage
 
-### `clear() => void`
+#### `clear() => void`
 Clears the localstorage
 
 ## Contributing

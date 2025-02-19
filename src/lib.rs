@@ -2,17 +2,10 @@ mod utils;
 mod xchacha20poly1305;
 extern crate web_sys;
 
-use std::sync::Mutex;
 use wasm_bindgen::prelude::*;
 use web_sys::{window, Storage, console};
-use web_sys::js_sys::Boolean;
+use base64::{engine::general_purpose, Engine as _};
 use xchacha20poly1305::XChaCha20Poly1305Wrapper;
-// use lazy_static::lazy_static;
-// use serde_json::{Value, json};
-
-// lazy_static! {
-//     static ref CONFIG_VALUE: Mutex<Value> = Mutex::new(json!({})); // Default empty JSON object
-// }
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -23,78 +16,76 @@ extern {
     fn alert(s: &str);
 }
 
-fn get_storage() -> Storage {
-    window()
-        .expect("window not found")
-        .local_storage()
-        .expect("Failed to access localStorage")
-        .expect("localStorage not detected")
+fn get_storage() -> Option<Storage> {
+    window()?.local_storage().ok()?
 }
 
+/// Stores an item in local storage with optional encryption.
 #[wasm_bindgen(js_name="setItem")]
 pub fn set_item(key: &str, data: &str, encrypted: Option<bool>) {
-    let mut should_encrypt = encrypted.unwrap_or(true);
-    let storage = get_storage();
-    if should_encrypt {
-        let chacha20 = XChaCha20Poly1305Wrapper::new();
-        match chacha20.encrypt_data(data.as_bytes()) {
-            Ok(encrypted_data) => storage.set_item(key, &encrypted_data).expect("Failed to store encrypted data"),
-            Err(e) => {
-                console::error_1(&JsValue::from_str(e));
+    if let Some(storage) = get_storage() {
+        if encrypted.unwrap_or(true) {
+            let chacha20 = XChaCha20Poly1305Wrapper::new();
+            match chacha20.encrypt_data(data.as_bytes()) {
+                Ok(encrypted_data) => {
+                    if let Err(e) = storage.set_item(key, &encrypted_data) {
+                        console::error_1(&JsValue::from_str(&format!("Storage error: {}", e.as_string().unwrap().to_string())));
+                    }
+                }
+                Err(e) => console::error_1(&JsValue::from_str(&format!("Encryption error: {}", e))),
             }
+        } else if let Err(e) = storage.set_item(key, data) {
+            console::error_1(&JsValue::from_str(&format!("Storage error: {}", e.as_string().unwrap().to_string())));
         }
-    } else {
-        storage.set_item(key, &data).expect("Failed to store encrypted data")
     }
 }
 
+/// Retrieves an item from local storage and decrypts it if necessary.
 #[wasm_bindgen(js_name="getItem")]
 pub fn get_item(key: &str) -> String {
-    let storage = get_storage();
-    let chacha20 = XChaCha20Poly1305Wrapper::new();
+    let Some(storage) = get_storage() else { return String::new(); };
 
-    if let Some(data) = storage.get_item(key).expect("Failed to retrieve data") {
+    if let Some(data) = storage.get_item(key).ok().flatten() {
+        // If the stored data is not encrypted, return it directly.
+
         if !data.contains("<C>") {
             return data;
         }
-        return match chacha20.decrypt_data(&data) {
-            Ok(decrypted_data) => decrypted_data,
-            Err(e) => {
-                console::error_1(&JsValue::from_str(e));
-                return "".to_string();
-            }
+
+        if let Some((prefix, rest)) = data.split_once("_") {
+            let decoded_buffer = general_purpose::STANDARD.decode(&rest).unwrap();
+            let decoded_data = decoded_buffer.into_iter().map(|x| x as char).collect::<String>();
+
+            let chacha20 = XChaCha20Poly1305Wrapper::new();
+            chacha20.decrypt_data(&decoded_data).unwrap_or_else(|e| {
+                console::error_1(&JsValue::from_str(&format!("Decryption error: {}", e)));
+                String::new()
+            })
+        } else {
+            String::new()
         }
+
+    } else {
+        String::new()
     }
-    "".to_string()
 }
 
+/// Removes an item from local storage.
 #[wasm_bindgen(js_name="removeItem")]
 pub fn remove_item(key: &str) {
-    let storage = get_storage();
-
-    storage.remove_item(key).expect("Failed to remove data");
-
+    if let Some(storage) = get_storage() {
+        if let Err(e) = storage.remove_item(key) {
+            console::error_1(&JsValue::from_str(&format!("Failed to remove item: {}", e.as_string().unwrap().to_string())));
+        }
+    }
 }
 
+/// Clears all stored data in local storage.
 #[wasm_bindgen(js_name="clear")]
 pub fn clear() {
-    let storage = get_storage();
-    storage.clear().expect("Failed to clear data");
+    if let Some(storage) = get_storage() {
+        if let Err(e) = storage.clear() {
+            console::error_1(&JsValue::from_str(&format!("Failed to clear storage: {}", e.as_string().unwrap().to_string())));
+        }
+    }
 }
-
-// #[wasm_bindgen]
-// pub fn set_config(json_str: String) {
-//     match serde_json::from_str::<Value>(&json_str) {
-//         Ok(parsed_json) => {
-//             let mut config = CONFIG_VALUE.lock().unwrap();
-//             *config = parsed_json;
-//         }
-//         Err(_) => console::error_1(&JsValue::from("Invalid configuration")),
-//     }
-// }
-//
-// #[wasm_bindgen]
-// pub fn get_config() -> String {
-//     let config = CONFIG_VALUE.lock().unwrap();
-//     serde_json::to_string(&*config).unwrap()
-// }

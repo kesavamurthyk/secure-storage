@@ -35,7 +35,7 @@ impl XChaCha20Poly1305Wrapper {
         let gen_nonce = Self::get_nonce(&self);
         let nonce = XNonce::from_slice(&gen_nonce);
 
-        let encrypted_data = cipher.encrypt(&nonce, data).map_err(|_| "Encryption failed")?;
+        let encrypted_data = cipher.encrypt(&nonce, data).map_err(|e| "Encryption failed")?;
         let encoded_data = self.encoder.encode::<&Vec<u8>>(&encrypted_data.as_ref());
         let encoded_nonce = self.encoder.encode::<&[u8]>(nonce);
         let encoded_key = self.encoder.encode::<&[u8; 32]>(&self.key);

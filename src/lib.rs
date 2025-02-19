@@ -34,8 +34,12 @@ fn get_storage() -> Storage {
 pub fn set_item(key: &str, data: &str) {
     let storage = get_storage();
     let chacha20 = XChaCha20Poly1305Wrapper::new();
-    let cipher_text = chacha20.encrypt_data(data.as_bytes()).expect("Encryption failed");
-    storage.set_item(key, &cipher_text).expect("Failed to store encrypted data");
+    match chacha20.encrypt_data(data.as_bytes()) {
+        Ok(encrypted_data) => storage.set_item(key, &encrypted_data).expect("Failed to store encrypted data"),
+        Err(e) => {
+            console::error_1(&JsValue::from_str(e));
+        }
+    }
 }
 
 #[wasm_bindgen]

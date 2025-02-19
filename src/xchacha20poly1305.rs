@@ -40,20 +40,20 @@ impl XChaCha20Poly1305Wrapper {
         let encoded_nonce = self.encoder.encode::<&[u8]>(nonce);
         let encoded_key = self.encoder.encode::<&[u8; 32]>(&self.key);
 
-        Ok(format!("{encoded_data}_{encoded_nonce}_{encoded_key}"))
+        Ok(format!("<C>_{encoded_data}_{encoded_nonce}_{encoded_key}"))
     }
 
     pub fn decrypt_data(&self, encrypted: &str) -> Result<String, &'static str> {
         let parts: Vec<&str> = encrypted.split('_').collect();
-        if parts.len() != 3 {
+        if parts.len() != 4 {
             use web_sys::console;
             console::error_1(&JsValue::from_str(&"Invalid Encryption"));
             return Ok("".to_string());
         }
 
-        let mut encrypted_data = self.encoder.decode(parts[0]).map_err(|_| "Decoding failed")?;
-        let nonce_bytes = self.encoder.decode(parts[1]).map_err(|_| "Decoding nonce failed")?;
-        let key_bytes = self.encoder.decode(parts[2]).map_err(|_| "Decoding key_bytes failed")?;
+        let mut encrypted_data = self.encoder.decode(parts[1]).map_err(|_| "Decoding failed")?;
+        let nonce_bytes = self.encoder.decode(parts[2]).map_err(|_| "Decoding nonce failed")?;
+        let key_bytes = self.encoder.decode(parts[3]).map_err(|_| "Decoding key_bytes failed")?;
         let arr: [u8; 32] = key_bytes.try_into().map_err(|_| "Invalid key")?;
 
         let cipher = XChaCha20Poly1305::new(&GenericArray::from(arr));

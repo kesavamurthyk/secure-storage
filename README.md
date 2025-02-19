@@ -32,8 +32,9 @@ wasm-pack build --target web
 ```
 
 ## 📚 API Reference
-#### `set_item(key: string, data: string) => void`
-Generates and sets the encrypted data in the localstorage
+#### `set_item(key: string, data: string, encrypted?: boolean | null) => void`
+@default: encrypted = true </br>
+Generates and sets the encrypted/raw data in the localstorage based on encrypted boolean
 
 #### `get_item(key: string) => string`
 Gets the decrypted data in the localstorage

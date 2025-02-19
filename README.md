@@ -1,69 +1,81 @@
-<div align="center">
+# Secure Storage 🔒
 
-  <h1><code>wasm-pack-template</code></h1>
+![Rust](https://img.shields.io/badge/Rust-%23dea584?style=for-the-badge&logo=rust&logoColor=white)
+![WebAssembly](https://img.shields.io/badge/WebAssembly-%237864BE?style=for-the-badge&logo=webassembly&logoColor=white)
+![ChaCha20-Poly1305](https://img.shields.io/badge/Encryption-ChaCha20--Poly1305-blueviolet)
 
-  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+## Overview
+**Secure Storage 🔒** is a WebAssembly (WASM) module written in Rust that provides secure, high-performance encryption and decryption capabilities using the **ChaCha20-Poly1305** AEAD (Authenticated Encryption with Associated Data) algorithm. This project is ideal for securely storing and transmitting sensitive data in web applications.
 
-  <p>
-    <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
-  </p>
+## Features
+1. ✅ **End-to-end Encryption** - Uses the ChaCha20-Poly1305 cipher for secure data encryption.
+2. ✅ **WASM Powered** - High-performance cryptographic operations in the browser.
+3. ✅ **Lightweight & Fast** - Rust’s efficiency ensures minimal overhead.
+4. ✅ **Authenticated Encryption** - Ensures data integrity and authenticity.
 
-  <h3>
-    <a href="https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html">Tutorial</a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/442252698964721669/443151097398296587">Chat</a>
-  </h3>
+## Installation
+Ensure you have Rust and `wasm-pack` installed:
 
-  <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
-</div>
-
-## About
-
-[**📚 Read this template tutorial! 📚**][template-docs]
-
-This template is designed for compiling Rust libraries into WebAssembly and
-publishing the resulting package to NPM.
-
-Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
-templates and usages of `wasm-pack`.
-
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
-[template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
-
-## 🚴 Usage
-
-### 🐑 Use `cargo generate` to Clone this Template
-
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
+```sh
+cargo install wasm-pack
 ```
 
-### 🛠️ Build with `wasm-pack build`
+Clone the repository and build the WASM package:
 
+```sh
+git clone https://github.com/yourusername/secure-storage.git
+cd secure-storage
 ```
-wasm-pack build
-```
-
-### 🔬 Test in Headless Browsers with `wasm-pack test`
-
-```
-wasm-pack test --headless --firefox
-```
-
-### 🎁 Publish to NPM with `wasm-pack publish`
-
-```
-wasm-pack publish
+### Generate package
+```Sh
+   wasm-pack build --target web 
 ```
 
-## 🔋 Batteries Included
+## Usage
+### Importing in JavaScript
+After building, you can use the WASM module in your JavaScript project:
 
-* [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
-  between WebAssembly and JavaScript.
-* [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
-  for logging panic messages to the developer console.
-* [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
-  for small code size.
+```js
+import init, { set_item, get_item } from './pkg/secure_storage.js';
+
+async function run() {
+    await init();
+    const data = {} // storage payload
+    set_item("data", JSON.stringify(data))
+    console.log(get_item("data"))
+}
+
+run();
+```
+
+## API
+### `set_item(key: string, data: string) => void`
+Generates and sets the encrypted data in the localstorage
+
+### `get_item(key: string) => string`
+Gets the decrypted data in the localstorage
+
+### `remove(key: string) => void`
+Removes the key from localstorage
+
+### `clear() => void`
+Clears the localstorage
+
+## Contributing
+We welcome contributions! Feel free to submit issues, feature requests, or pull requests.
+
+1. Fork the repo
+2. Create a new branch: `git checkout -b feature-branch`
+3. Commit changes: `git commit -m "Add a new feature"`
+4. Push to the branch: `git push origin feature-branch`
+5. Create a Pull Request
+
+## License
+This project is licensed under the MIT License.
+
+## Acknowledgments
+Special thanks to the Rust and WebAssembly communities for their amazing tools and documentation!
+
+---
+
+🚀 **Secure your data with Secure Storage 🔒 today!**

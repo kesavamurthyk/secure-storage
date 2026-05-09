@@ -1,19 +1,19 @@
-# Secure Storage 🔒
+# Secure Storage
 
 ![Rust](https://img.shields.io/badge/Rust-%23dea584?style=for-the-badge&logo=rust&logoColor=white)
 ![WebAssembly](https://img.shields.io/badge/WebAssembly-%237864BE?style=for-the-badge&logo=webassembly&logoColor=white)
 ![ChaCha20-Poly1305](https://img.shields.io/badge/Encryption-ChaCha20--Poly1305-blueviolet)
 
-## 🚀 Overview
-**Secure Storage 🔒** is a WebAssembly (WASM) module written in Rust that provides secure, high-performance encryption and decryption capabilities using the **ChaCha20-Poly1305** AEAD (Authenticated Encryption with Associated Data) algorithm. This project is ideal for securely storing and transmitting sensitive data in web applications.
+## Overview
+**Secure Storage** is a WebAssembly (WASM) module written in Rust that provides secure, high-performance encryption and decryption capabilities using the **ChaCha20-Poly1305** AEAD (Authenticated Encryption with Associated Data) algorithm. This project is ideal for securely storing and transmitting sensitive data in web applications.
 
-## ✨ Features
-1. ✅ **End-to-end Encryption** - Uses the ChaCha20-Poly1305 cipher for secure data encryption.
-2. ✅ **WASM Powered** - High-performance cryptographic operations in the browser.
-3. ✅ **Lightweight & Fast** - Rust’s efficiency ensures minimal overhead.
-4. ✅ **Authenticated Encryption** - Ensures data integrity and authenticity.
+## Features
+1. **End-to-end Encryption** - Uses the ChaCha20-Poly1305 cipher for secure data encryption.
+2. **WASM Powered** - High-performance cryptographic operations in the browser.
+3. **Lightweight & Fast** - Rust’s efficiency ensures minimal overhead.
+4. **Authenticated Encryption** - Ensures data integrity and authenticity.
 
-## 📥 Installation
+## Installation
 Ensure you have Rust and `wasm-pack` installed:
 
 ```sh
@@ -26,12 +26,12 @@ Clone the repository and build the WASM package:
 git clone https://github.com/yourusername/secure-storage.git
 cd secure-storage
 ```
-### 🛠️ Generate package
+### Generate package
 ```Sh
 wasm-pack build --target web 
 ```
 
-## 📚 API Reference
+## API Reference
 #### `set_item(key: string, data: string, encrypted?: boolean | null) => void`
 @default: encrypted = true </br>
 Generates and sets the encrypted/raw data in the localstorage based on encrypted boolean
@@ -45,13 +45,13 @@ Removes the key from localstorage
 #### `clear() => void`
 Clears the localstorage
 
-## ✔️ Compatible web engine
+## Compatible web engine
 Here is the list of tested web engine,
 1. [Chromium](https://en.wikipedia.org/wiki/V8_(JavaScript_engine))
 2. [Safari](https://en.wikipedia.org/wiki/Safari_(web_browser))
 3. [Gecko](https://en.wikipedia.org/wiki/Gecko_(software))
 
-## 🤝 Contributing
+## Contributing
 We welcome contributions! Feel free to submit issues, feature requests, or pull requests.
 
 1. Fork the repo
@@ -60,12 +60,12 @@ We welcome contributions! Feel free to submit issues, feature requests, or pull 
 4. Push to the branch: `git push origin feature-branch`
 5. Create a Pull Request
 
-## 📜 License
+## License
 This project is licensed under the MIT License.
 
-## 🙌 Acknowledgments
+## Acknowledgments
 Special thanks to the Rust and WebAssembly communities for their amazing tools and documentation!
 
 ---
 
-🚀 **Secure your data with Secure Storage 🔒 today!**
+**Secure your data with Secure Storage today!**
